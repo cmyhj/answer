@@ -13,8 +13,10 @@ ament_auto_find_build_dependencies()
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-ament_auto_add_executable(answer_node src/answer_node.cpp)
+ament_auto_add_executable(answer_node src/answer_node.cpp include/answer/answer.cpp
+        include/answer/image_processing.cpp)
 target_compile_features(answer_node PUBLIC c_std_99 cxx_std_17)
+include_directories(include)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
