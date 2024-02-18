@@ -21,8 +21,8 @@ void Answer::imageCallback(sensor_msgs::msg::Image::SharedPtr rosImage) {
         cv::minEnclosingCircle(*it, clickCenter, clickRadius);//找出中心点
 
         //根据点与线的距离判断是否点击
-        if (processingImage.distanceToLine(clickCenter) < (95 + 25)
-            && processingImage.distanceToLine(clickCenter) > (95 - 25)) {
+        if (processingImage.distanceToLine(clickCenter) < (90 + 25)
+            && processingImage.distanceToLine(clickCenter) > (90 - 25)) {
             clickPoint.x = clickCenter.x;
             clickPoint.y = clickCenter.y;//赋值
             clickPointPublisher->publish(clickPoint);//发送
