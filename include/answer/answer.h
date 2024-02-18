@@ -23,7 +23,6 @@ private:
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr imageSubscription;
     geometry_msgs::msg::Point32 clickPoint;
 
-
     void imageCallback(sensor_msgs::msg::Image::SharedPtr rosImage);
 
 public:
