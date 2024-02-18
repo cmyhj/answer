@@ -14,7 +14,7 @@ ament_auto_find_build_dependencies()
 # find_package(<dependency> REQUIRED)
 
 ament_auto_add_executable(answer_node src/answer_node.cpp include/answer/answer.cpp
-        include/answer/image_processing.cpp)
+        include/image_processing/image_processing.cpp)
 target_compile_features(answer_node PUBLIC c_std_99 cxx_std_17)
 include_directories(include)
 

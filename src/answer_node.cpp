@@ -2,9 +2,8 @@
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <answer/answer.h>
-#include "answer/image_processing.h"
+#include "image_processing/image_processing.h"
 
-cv::Mat clickMat=cv::imread("click.png");
 
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);

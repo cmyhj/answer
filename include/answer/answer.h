@@ -15,17 +15,16 @@
 #include <opencv2/opencv.hpp>
 #include <cv_bridge/cv_bridge.h>
 
-#include "image_processing.h"
+#include "image_processing/image_processing.h"
 
 class Answer : public rclcpp::Node {
 private:
     rclcpp::Publisher<geometry_msgs::msg::Point32>::SharedPtr clickPointPublisher;
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr imageSubscription;
-    rclcpp::TimerBase::SharedPtr timer_;
     geometry_msgs::msg::Point32 clickPoint;
 
-    void imageCallback(const sensor_msgs::msg::Image::SharedPtr rosImage);
-    void timer_callback();
+
+    void imageCallback(sensor_msgs::msg::Image::SharedPtr rosImage);
 
 public:
     Answer();
