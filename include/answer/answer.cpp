@@ -73,7 +73,7 @@ Answer::Answer() : Node("answer_node") {
     clickPoint.x = 0;
     clickPoint.y = 0;
     clickPoint.z = 0;
-    delayDistance=110;
+    delayDistance=90;
     delayCalculateFlag=0;
     shortestDistance=6000;
     lastLine=cv::Vec4i(0,0,0,0);
