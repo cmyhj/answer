@@ -27,22 +27,56 @@ imageProcessing::imageProcessing(cv::Mat &&originImage) {
 std::vector<std::vector<cv::Point>> imageProcessing::centerCounts() {
     cv::Mat result;
     std::vector<std::vector<cv::Point>> counts;
+    std::vector<cv::Vec4i> lines;
     //寻找click块（蓝色）
     cv::inRange(src, cv::Scalar(190, 150, 10), cv::Scalar(255, 255, 180), result);
     //图像处理
     cv::Mat medianBlurImageMat;
     cv::medianBlur(result, medianBlurImageMat, 3);
-    //寻找轮廓
-    cv::findContours(medianBlurImageMat, counts, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    /*cv::Mat edges_image;
+    cv::Canny(medianBlurImageMat, edges_image, 100, 200); */// 边缘检测
+    HoughLinesP(medianBlurImageMat, lines, 1, CV_PI / 180,
+                80, 100, 10); // 直线检测算
+    cv::inRange(src, cv::Scalar(0, 0, 0), cv::Scalar(0, 0, 0), result);
+    for (size_t i = 0; i < lines.size(); i++)
+    {
+        cv::Vec4i l = lines[i];
+        cv::line(result, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(186, 88, 255), 3);
+    }
+    cv::findContours(result, counts, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     return counts;
 }
 
+float imageProcessing::missClickDistance(){
+    cv::Mat result;
+    float distance=0;
+    std::vector<std::vector<cv::Point>> contours;
+    //寻找miss块（黑色）
+    cv::inRange(src, cv::Scalar(0, 0, 0), cv::Scalar(50, 50, 50), result);
+    cv::Mat medianBlurImageMat;
+    cv::medianBlur(result, medianBlurImageMat, 3);
+    cv::findContours(medianBlurImageMat, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+    float clickRadius;
+    cv::Point2f missCenter;
+    for (auto it = contours.begin(); it != contours.end(); it++) {
+        cv::minEnclosingCircle(*it, missCenter, clickRadius);//找出中心点
+        //根据点与线的距离判断是否点击
+        if (distanceToLine(missCenter) < distance) {
+            distance=distanceToLine(missCenter);
+        }
+    }
+    return  -distance;
+}
 //计算click块到判定线的距离
 float imageProcessing::distanceToLine(cv::Point2f clickCenter) const {
-    float A, B, C;
+    float A, B, C,result;
     A = line[endPointY] - line[startPointY];
     B = line[startPointX] - line[endPointX];
     C = line[endPointX] * line[startPointY] - line[startPointX] * line[endPointY];
     // 距离公式为d = |A*x0 + B*y0 + C|/√(A^2 + B^2)*/
-    return abs(A * clickCenter.x + B * clickCenter.y + C) / sqrt(A * A + B * B);
+    result=abs(A * clickCenter.x + B * clickCenter.y + C) / sqrt(A * A + B * B);
+    if(clickCenter.y>(line[startPointY]+line[endPointY])/2){
+        result=-result;
+    }
+    return result;
 }

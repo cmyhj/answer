@@ -22,6 +22,9 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::Point32>::SharedPtr clickPointPublisher;
     rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr imageSubscription;
     geometry_msgs::msg::Point32 clickPoint;
+    float delayDistance;
+    int delayCalculateFlag;
+    float shortestDistance;
 
     void imageCallback(sensor_msgs::msg::Image::SharedPtr rosImage);
 

@@ -28,6 +28,7 @@ public:
     explicit imageProcessing(cv::Mat &&originImage);//构造函数
     std::vector<std::vector<cv::Point>> centerCounts();//寻找click块轮廓
     [[nodiscard]] float distanceToLine(cv::Point2f clickCenter) const;//计算click块到判定线的距离
+    float missClickDistance();
 };
 
 
