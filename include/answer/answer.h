@@ -25,7 +25,7 @@ private:
     float delayDistance;
     int delayCalculateFlag;
     float shortestDistance;
-
+    cv::Vec4i lastLine;
     void imageCallback(sensor_msgs::msg::Image::SharedPtr rosImage);
 
 public:

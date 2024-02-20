@@ -1,0 +1,5 @@
+# ninja log v5
+2	5087	1708435721423422620	CMakeFiles/answer_node.dir/include/answer/answer.cpp.o	4f33adb4a05168c8
+5087	5365	1708435721707429529	answer_node	fc0aab6d5b7855cd
+2	2226	1708435718571353159	CMakeFiles/answer_node.dir/src/answer_node.cpp.o	b38a6357a6cc706e
+2	2177	1708435718519351891	CMakeFiles/answer_node.dir/include/image_processing/image_processing.cpp.o	d93bd587e8a45215

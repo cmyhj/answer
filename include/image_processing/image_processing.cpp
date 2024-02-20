@@ -5,7 +5,7 @@
 #include "image_processing.h"
 
 //构造函数
-imageProcessing::imageProcessing(cv::Mat &&originImage) {
+imageProcessing::imageProcessing(cv::Mat &&originImage,const cv::Vec4i& lastLine) {
     //初始化
     src = originImage;
 
@@ -18,13 +18,16 @@ imageProcessing::imageProcessing(cv::Mat &&originImage) {
     HoughLinesP(edges_image, lines, 1, CV_PI / 180,
                 80, 200, 10); // 直线检测算
     //存储判定线
-    if (lines.size() > 0) {
+    if (!lines.empty()) {
         line = lines[0];
+    }
+    else{
+        line=lastLine;
     }
 }
 
 //寻找click块轮廓
-std::vector<std::vector<cv::Point>> imageProcessing::centerCounts() {
+std::vector<std::vector<cv::Point>> imageProcessing::centerCounts() const {
     cv::Mat result;
     std::vector<std::vector<cv::Point>> counts;
     std::vector<cv::Vec4i> lines;
@@ -36,18 +39,17 @@ std::vector<std::vector<cv::Point>> imageProcessing::centerCounts() {
     /*cv::Mat edges_image;
     cv::Canny(medianBlurImageMat, edges_image, 100, 200); */// 边缘检测
     HoughLinesP(medianBlurImageMat, lines, 1, CV_PI / 180,
-                80, 100, 10); // 直线检测算
+                80, 80, 10); // 直线检测算
     cv::inRange(src, cv::Scalar(0, 0, 0), cv::Scalar(0, 0, 0), result);
-    for (size_t i = 0; i < lines.size(); i++)
+    for (auto l : lines)
     {
-        cv::Vec4i l = lines[i];
-        cv::line(result, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(186, 88, 255), 3);
+        cv::line(result, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(255, 255, 255), 3);
     }
     cv::findContours(result, counts, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     return counts;
 }
 
-float imageProcessing::missClickDistance(){
+float imageProcessing::missClickDistance() const{
     cv::Mat result;
     float distance=0;
     std::vector<std::vector<cv::Point>> contours;
@@ -75,7 +77,7 @@ float imageProcessing::distanceToLine(cv::Point2f clickCenter) const {
     C = line[endPointX] * line[startPointY] - line[startPointX] * line[endPointY];
     // 距离公式为d = |A*x0 + B*y0 + C|/√(A^2 + B^2)*/
     result=abs(A * clickCenter.x + B * clickCenter.y + C) / sqrt(A * A + B * B);
-    if(clickCenter.y>(line[startPointY]+line[endPointY])/2){
+    if(clickCenter.y>-(C+A * clickCenter.x)/B){
         result=-result;
     }
     return result;
