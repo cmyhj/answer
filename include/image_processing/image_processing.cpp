@@ -5,7 +5,7 @@
 #include "image_processing.h"
 
 //构造函数
-imageProcessing::imageProcessing(cv::Mat &&originImage,const cv::Vec4i& lastLine) {
+imageProcessing::imageProcessing(cv::Mat &&originImage, const cv::Vec4i &lastLine) {
     //初始化
     src = originImage;
 
@@ -20,9 +20,8 @@ imageProcessing::imageProcessing(cv::Mat &&originImage,const cv::Vec4i& lastLine
     //存储判定线
     if (!lines.empty()) {
         line = lines[0];
-    }
-    else{
-        line=lastLine;
+    } else {
+        line = lastLine;
     }
 }
 
@@ -36,22 +35,20 @@ std::vector<std::vector<cv::Point>> imageProcessing::centerCounts() const {
     //图像处理
     cv::Mat medianBlurImageMat;
     cv::medianBlur(result, medianBlurImageMat, 3);
-    /*cv::Mat edges_image;
-    cv::Canny(medianBlurImageMat, edges_image, 100, 200); */// 边缘检测
     HoughLinesP(medianBlurImageMat, lines, 1, CV_PI / 180,
-                80, 80, 10); // 直线检测算
-    cv::inRange(src, cv::Scalar(0, 0, 0), cv::Scalar(0, 0, 0), result);
-    for (auto l : lines)
+                80, 80, 10); // 直线检测
+    cv::inRange(src, cv::Scalar(0, 0, 0), cv::Scalar(0, 0, 0), result);//把其他颜色去掉
+    for (auto l: lines)//画出click块
     {
         cv::line(result, cv::Point(l[0], l[1]), cv::Point(l[2], l[3]), cv::Scalar(255, 255, 255), 3);
     }
-    cv::findContours(result, counts, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    cv::findContours(result, counts, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);//找出click块中心
     return counts;
 }
 
-float imageProcessing::missClickDistance() const{
+float imageProcessing::missClickDistance() const {
     cv::Mat result;
-    float distance=0;
+    float distance = 0;
     std::vector<std::vector<cv::Point>> contours;
     //寻找miss块（黑色）
     cv::inRange(src, cv::Scalar(0, 0, 0), cv::Scalar(50, 50, 50), result);
@@ -62,23 +59,23 @@ float imageProcessing::missClickDistance() const{
     cv::Point2f missCenter;
     for (auto it = contours.begin(); it != contours.end(); it++) {
         cv::minEnclosingCircle(*it, missCenter, clickRadius);//找出中心点
-        //根据点与线的距离判断是否点击
         if (distanceToLine(missCenter) < distance) {
-            distance=distanceToLine(missCenter);
+            distance = distanceToLine(missCenter);
         }
     }
-    return  -distance;
+    return -distance;
 }
+
 //计算click块到判定线的距离
 float imageProcessing::distanceToLine(cv::Point2f clickCenter) const {
-    float A, B, C,result;
+    float A, B, C, result;
     A = line[endPointY] - line[startPointY];
     B = line[startPointX] - line[endPointX];
     C = line[endPointX] * line[startPointY] - line[startPointX] * line[endPointY];
     // 距离公式为d = |A*x0 + B*y0 + C|/√(A^2 + B^2)*/
-    result=abs(A * clickCenter.x + B * clickCenter.y + C) / sqrt(A * A + B * B);
-    if(clickCenter.y>-(C+A * clickCenter.x)/B){
-        result=-result;
+    result = abs(A * clickCenter.x + B * clickCenter.y + C) / sqrt(A * A + B * B);
+    if (clickCenter.y > -(C + A * clickCenter.x) / B) {//在判定线上方为正，在下方为负
+        result = -result;
     }
     return result;
 }
